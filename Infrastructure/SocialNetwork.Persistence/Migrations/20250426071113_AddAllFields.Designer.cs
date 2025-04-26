@@ -12,7 +12,7 @@ using Persistence.Contexts;
 namespace SocialNetwork.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250426065734_AddAllFields")]
+    [Migration("20250426071113_AddAllFields")]
     partial class AddAllFields
     {
         /// <inheritdoc />
