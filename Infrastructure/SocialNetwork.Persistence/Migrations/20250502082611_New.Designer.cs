@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Persistence.Contexts;
+using SocialNetwork.Persistence.Contexts;
 
 #nullable disable
 
 namespace SocialNetwork.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250426071113_AddAllFields")]
-    partial class AddAllFields
+    [Migration("20250502082611_New")]
+    partial class New
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,6 +45,9 @@ namespace SocialNetwork.Persistence.Migrations
 
                     b.Property<DateTime>("EventDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("EventType")
+                        .HasColumnType("integer");
 
                     b.Property<int>("GoingCount")
                         .HasColumnType("integer");
@@ -143,12 +146,12 @@ namespace SocialNetwork.Persistence.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserProfileId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("UserProfileId")
                         .IsUnique();
 
                     b.ToTable("NotificationPreferences");
@@ -183,12 +186,12 @@ namespace SocialNetwork.Persistence.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserProfileId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("UserProfileId")
                         .IsUnique();
 
                     b.ToTable("NotificationSettings");
@@ -231,6 +234,45 @@ namespace SocialNetwork.Persistence.Migrations
                     b.ToTable("Posts");
                 });
 
+            modelBuilder.Entity("SocialNetwork.Domain.Entities.PostComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserProfileId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserProfileId");
+
+                    b.ToTable("PostComments");
+                });
+
             modelBuilder.Entity("SocialNetwork.Domain.Entities.PrivacySettings", b =>
                 {
                     b.Property<int>("Id")
@@ -263,18 +305,18 @@ namespace SocialNetwork.Persistence.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserProfileId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("UserProfileId")
                         .IsUnique();
 
                     b.ToTable("PrivacySettings");
                 });
 
-            modelBuilder.Entity("SocialNetwork.Domain.Entities.User", b =>
+            modelBuilder.Entity("SocialNetwork.Domain.Entities.UserProfile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -288,10 +330,6 @@ namespace SocialNetwork.Persistence.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("CurrentPassword")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("TwoFactorAuthenticationType")
                         .HasColumnType("integer");
 
@@ -303,7 +341,7 @@ namespace SocialNetwork.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("UsersProfiles");
                 });
 
             modelBuilder.Entity("SocialNetwork.Domain.Entities.UserProfileDescription", b =>
@@ -348,16 +386,16 @@ namespace SocialNetwork.Persistence.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("UserProfileId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("UserProfileId")
                         .IsUnique();
 
                     b.ToTable("UserProfileDescriptions");
@@ -390,12 +428,12 @@ namespace SocialNetwork.Persistence.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserProfileId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserProfileId");
 
                     b.ToTable("UserProfileSocialLinks");
                 });
@@ -411,45 +449,62 @@ namespace SocialNetwork.Persistence.Migrations
 
             modelBuilder.Entity("SocialNetwork.Domain.Entities.NotificationPreferences", b =>
                 {
-                    b.HasOne("SocialNetwork.Domain.Entities.User", null)
+                    b.HasOne("SocialNetwork.Domain.Entities.UserProfile", null)
                         .WithOne("NotificationPreferences")
-                        .HasForeignKey("SocialNetwork.Domain.Entities.NotificationPreferences", "UserId")
+                        .HasForeignKey("SocialNetwork.Domain.Entities.NotificationPreferences", "UserProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("SocialNetwork.Domain.Entities.NotificationSettings", b =>
                 {
-                    b.HasOne("SocialNetwork.Domain.Entities.User", null)
+                    b.HasOne("SocialNetwork.Domain.Entities.UserProfile", null)
                         .WithOne("NotificationSettings")
-                        .HasForeignKey("SocialNetwork.Domain.Entities.NotificationSettings", "UserId")
+                        .HasForeignKey("SocialNetwork.Domain.Entities.NotificationSettings", "UserProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SocialNetwork.Domain.Entities.PostComment", b =>
+                {
+                    b.HasOne("SocialNetwork.Domain.Entities.Post", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SocialNetwork.Domain.Entities.UserProfile", "UserProfile")
+                        .WithMany()
+                        .HasForeignKey("UserProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserProfile");
+                });
+
             modelBuilder.Entity("SocialNetwork.Domain.Entities.PrivacySettings", b =>
                 {
-                    b.HasOne("SocialNetwork.Domain.Entities.User", null)
+                    b.HasOne("SocialNetwork.Domain.Entities.UserProfile", null)
                         .WithOne("PrivacySettings")
-                        .HasForeignKey("SocialNetwork.Domain.Entities.PrivacySettings", "UserId")
+                        .HasForeignKey("SocialNetwork.Domain.Entities.PrivacySettings", "UserProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("SocialNetwork.Domain.Entities.UserProfileDescription", b =>
                 {
-                    b.HasOne("SocialNetwork.Domain.Entities.User", null)
+                    b.HasOne("SocialNetwork.Domain.Entities.UserProfile", null)
                         .WithOne("Description")
-                        .HasForeignKey("SocialNetwork.Domain.Entities.UserProfileDescription", "UserId")
+                        .HasForeignKey("SocialNetwork.Domain.Entities.UserProfileDescription", "UserProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("SocialNetwork.Domain.Entities.UserProfileSocialLink", b =>
                 {
-                    b.HasOne("SocialNetwork.Domain.Entities.User", null)
+                    b.HasOne("SocialNetwork.Domain.Entities.UserProfile", null)
                         .WithMany("SocialNetworkLinks")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -460,7 +515,12 @@ namespace SocialNetwork.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SocialNetwork.Domain.Entities.User", b =>
+            modelBuilder.Entity("SocialNetwork.Domain.Entities.Post", b =>
+                {
+                    b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("SocialNetwork.Domain.Entities.UserProfile", b =>
                 {
                     b.Navigation("Description")
                         .IsRequired();

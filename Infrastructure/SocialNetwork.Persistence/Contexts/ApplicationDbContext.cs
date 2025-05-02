@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SocialNetwork.Domain.Entities;
 
-namespace Persistence.Contexts;
+namespace SocialNetwork.Persistence.Contexts;
 
 public class ApplicationDbContext : DbContext
 {
@@ -11,9 +12,10 @@ public class ApplicationDbContext : DbContext
     public DbSet<NotificationPreferences> NotificationPreferences { get; set; }
     public DbSet<NotificationSettings> NotificationSettings { get; set; }
     public DbSet<PrivacySettings> PrivacySettings { get; set; }
-    public DbSet<User> Users { get; set; }
+    public DbSet<UserProfile> UsersProfiles { get; set; }
     public DbSet<UserProfileDescription> UserProfileDescriptions { get; set; }
     public DbSet<UserProfileSocialLink> UserProfileSocialLinks { get; set; }
+    public DbSet<PostComment> PostComments { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {

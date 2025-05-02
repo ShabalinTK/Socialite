@@ -1,4 +1,4 @@
-﻿using SocialNetwork.Domain.Common;
+using SocialNetwork.Domain.Common;
 
 namespace SocialNetwork.Domain.Entities;
 

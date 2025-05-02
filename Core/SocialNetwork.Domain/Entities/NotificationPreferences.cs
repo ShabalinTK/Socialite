@@ -1,10 +1,10 @@
-﻿using SocialNetwork.Domain.Common;
+using SocialNetwork.Domain.Common;
 
 namespace SocialNetwork.Domain.Entities;
 
 public class NotificationPreferences : BaseAuditableEntity
 {
-    public int UserId { get; set; }
+    public int UserProfileId { get; set; }
     public bool NotifyOnNewMessage { get; set; } = true;
     public bool NotifyOnPhotoLike { get; set; } = true;
     public bool NotifyOnPhotoShare { get; set; } = true;

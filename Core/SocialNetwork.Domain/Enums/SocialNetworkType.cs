@@ -1,4 +1,4 @@
-﻿namespace SocialNetwork.Domain.Enums;
+namespace SocialNetwork.Domain.Enums;
 
 public enum SocialNetworkType
 {

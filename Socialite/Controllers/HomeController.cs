@@ -1,21 +1,34 @@
+using System.Diagnostics;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Socialite.Models;
-using System.Diagnostics;
+using SocialNetwork.Application.Features.Posts.Queries.GetByUserPageId;
+using SocialNetwork.MVC.Models.Home;
 
-namespace Socialite.Controllers
+namespace SocialNetwork.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IMediator _mediator;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IMediator mediator)
         {
             _logger = logger;
+            _mediator = mediator;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var userPageId = 1;
+            var query = new GetByUserPageIdQuery(userPageId);
+
+            var viewModel = new HomeVM
+            {
+                Feeds = await _mediator.Send(query)
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult Privacy()

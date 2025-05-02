@@ -1,4 +1,4 @@
-﻿using System.Xml.Schema;
+using System.Xml.Schema;
 
 namespace SocialNetwork.Domain.Enums;
 
@@ -8,7 +8,7 @@ public enum GenderType
     /// мужчина
     /// </summary>
     MALE,
-
+    
     /// <summary>
     /// женщина
     /// </summary>

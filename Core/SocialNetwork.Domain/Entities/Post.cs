@@ -1,4 +1,4 @@
-﻿using SocialNetwork.Domain.Common;
+using SocialNetwork.Domain.Common;
 
 namespace SocialNetwork.Domain.Entities;
 
@@ -23,4 +23,6 @@ public class Post : BaseAuditableEntity
     /// Количество дизлайков
     /// </summary>
     public int DisLikeCount { get; set; }
+
+    public ICollection<PostComment> Comments { get; set; }
 }

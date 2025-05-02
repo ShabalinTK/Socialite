@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace SocialNetwork.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddAllFields : Migration
+    public partial class New : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,6 +19,7 @@ namespace SocialNetwork.Persistence.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Title = table.Column<string>(type: "text", nullable: false),
+                    EventType = table.Column<int>(type: "integer", nullable: false),
                     InterestedCount = table.Column<int>(type: "integer", nullable: false),
                     GoingCount = table.Column<int>(type: "integer", nullable: false),
                     Author = table.Column<string>(type: "text", nullable: false),
@@ -54,12 +55,11 @@ namespace SocialNetwork.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "UsersProfiles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CurrentPassword = table.Column<string>(type: "text", nullable: false),
                     TwoFactorAuthenticationType = table.Column<int>(type: "integer", nullable: false),
                     CreatedBy = table.Column<int>(type: "integer", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -68,7 +68,7 @@ namespace SocialNetwork.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_UsersProfiles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -101,7 +101,7 @@ namespace SocialNetwork.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    UserProfileId = table.Column<int>(type: "integer", nullable: false),
                     NotifyOnNewMessage = table.Column<bool>(type: "boolean", nullable: false),
                     NotifyOnPhotoLike = table.Column<bool>(type: "boolean", nullable: false),
                     NotifyOnPhotoShare = table.Column<bool>(type: "boolean", nullable: false),
@@ -118,9 +118,9 @@ namespace SocialNetwork.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_NotificationPreferences", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_NotificationPreferences_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_NotificationPreferences_UsersProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UsersProfiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -131,7 +131,7 @@ namespace SocialNetwork.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    UserProfileId = table.Column<int>(type: "integer", nullable: false),
                     EnableEmailNotifications = table.Column<bool>(type: "boolean", nullable: false),
                     EnableWebNotifications = table.Column<bool>(type: "boolean", nullable: false),
                     EnablePhoneNotifications = table.Column<bool>(type: "boolean", nullable: false),
@@ -144,9 +144,40 @@ namespace SocialNetwork.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_NotificationSettings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_NotificationSettings_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_NotificationSettings_UsersProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UsersProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostComments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Text = table.Column<string>(type: "text", nullable: false),
+                    PostId = table.Column<int>(type: "integer", nullable: false),
+                    UserProfileId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedBy = table.Column<int>(type: "integer", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostComments_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PostComments_UsersProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UsersProfiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -157,7 +188,7 @@ namespace SocialNetwork.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    UserProfileId = table.Column<int>(type: "integer", nullable: false),
                     FollowerPolicy = table.Column<int>(type: "integer", nullable: false),
                     MessagePolicy = table.Column<int>(type: "integer", nullable: false),
                     StatusPolicy = table.Column<int>(type: "integer", nullable: false),
@@ -171,9 +202,9 @@ namespace SocialNetwork.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_PrivacySettings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PrivacySettings_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_PrivacySettings_UsersProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UsersProfiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -184,7 +215,7 @@ namespace SocialNetwork.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    UserProfileId = table.Column<int>(type: "integer", nullable: false),
                     UserName = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     Bio = table.Column<string>(type: "text", nullable: false),
@@ -201,9 +232,9 @@ namespace SocialNetwork.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_UserProfileDescriptions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserProfileDescriptions_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_UserProfileDescriptions_UsersProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UsersProfiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -214,7 +245,7 @@ namespace SocialNetwork.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    UserProfileId = table.Column<int>(type: "integer", nullable: false),
                     SocialLinkUrl = table.Column<string>(type: "text", nullable: false),
                     SocialNetworkType = table.Column<int>(type: "integer", nullable: false),
                     CreatedBy = table.Column<int>(type: "integer", nullable: true),
@@ -226,9 +257,9 @@ namespace SocialNetwork.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_UserProfileSocialLinks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserProfileSocialLinks_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_UserProfileSocialLinks_UsersProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UsersProfiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -240,33 +271,43 @@ namespace SocialNetwork.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_NotificationPreferences_UserId",
+                name: "IX_NotificationPreferences_UserProfileId",
                 table: "NotificationPreferences",
-                column: "UserId",
+                column: "UserProfileId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_NotificationSettings_UserId",
+                name: "IX_NotificationSettings_UserProfileId",
                 table: "NotificationSettings",
-                column: "UserId",
+                column: "UserProfileId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PrivacySettings_UserId",
+                name: "IX_PostComments_PostId",
+                table: "PostComments",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostComments_UserProfileId",
+                table: "PostComments",
+                column: "UserProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrivacySettings_UserProfileId",
                 table: "PrivacySettings",
-                column: "UserId",
+                column: "UserProfileId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfileDescriptions_UserId",
+                name: "IX_UserProfileDescriptions_UserProfileId",
                 table: "UserProfileDescriptions",
-                column: "UserId",
+                column: "UserProfileId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfileSocialLinks_UserId",
+                name: "IX_UserProfileSocialLinks_UserProfileId",
                 table: "UserProfileSocialLinks",
-                column: "UserId");
+                column: "UserProfileId");
         }
 
         /// <inheritdoc />
@@ -282,7 +323,7 @@ namespace SocialNetwork.Persistence.Migrations
                 name: "NotificationSettings");
 
             migrationBuilder.DropTable(
-                name: "Posts");
+                name: "PostComments");
 
             migrationBuilder.DropTable(
                 name: "PrivacySettings");
@@ -297,7 +338,10 @@ namespace SocialNetwork.Persistence.Migrations
                 name: "Events");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "UsersProfiles");
         }
     }
 }

@@ -1,6 +1,7 @@
-﻿namespace SocialNetwork.Domain.Common.Interfaces;
-
-public interface IEntity
+﻿namespace SocialNetwork.Domain.Common.Interfaces
 {
-    public int Id { get; set; }
+    public interface IEntity
+    {
+        public int Id { get; set; }
+    }
 }
